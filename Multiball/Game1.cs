@@ -5,10 +5,11 @@ using System;
 using System.Collections.Generic;
 
 namespace Multiball
-{   FEL
+{    
+    //Ny ren Start
     public class Game1 : Game
     {
-        fel fel
+       
    
         GraphicsDeviceManager _graphics;
         SpriteBatch _spriteBatch;
