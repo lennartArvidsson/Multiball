@@ -34,6 +34,13 @@ namespace Multiball
         bool _visaMeny = true;
         SpriteFont _font;
 
+        int _styrLäge = 0;      // 0=Direkt, 1=Tröghet
+        float _hastighetX = 2f;     // tröghetshastighet vid start
+        float _hastighetY = 2f;
+        float _acceleration = 0.4f; // hur mycket en puff ger
+        float _bromsning = 0.85f; // Space-broms (multipliceras varje bildruta)
+        float _maxFart = 12f;   // tak för tröghetsläget
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -78,6 +85,7 @@ namespace Multiball
                     _fiendeMaxFart = _meny.FiendeMaxFart;
                     System.Diagnostics.Debug.WriteLine($"Tilldelat: _fiendeMaxFart = {_fiendeMaxFart}");
 
+                    _styrLäge = _meny.StyrLäge;
                     _antalBollar = _meny.AntalFiender;
                     _liv = _meny.AntalLiv;
                     _visaMeny = false;
@@ -108,18 +116,73 @@ namespace Multiball
             if (_gameOver)
             {
                 if (tangenter.IsKeyDown(Keys.R))
-                    StaraOm();
+                    StartaOm();
                 return;
             }
 
             // Flytta spelaren
-            if (tangenter.IsKeyDown(Keys.Left)) _spelarX -= _spelarFart;
-            if (tangenter.IsKeyDown(Keys.Right)) _spelarX += _spelarFart;
-            if (tangenter.IsKeyDown(Keys.Up)) _spelarY -= _spelarFart;
-            if (tangenter.IsKeyDown(Keys.Down)) _spelarY += _spelarFart;
+            if (_styrLäge == 0)
+            {
+                // --- Direkt styrning ---
+                if (tangenter.IsKeyDown(Keys.Left)) _spelarX -= _spelarFart;
+                if (tangenter.IsKeyDown(Keys.Right)) _spelarX += _spelarFart;
+                if (tangenter.IsKeyDown(Keys.Up)) _spelarY -= _spelarFart;
+                if (tangenter.IsKeyDown(Keys.Down)) _spelarY += _spelarFart;
 
-            _spelarX = Math.Clamp(_spelarX, _spelarRadie, bredd - _spelarRadie);
-            _spelarY = Math.Clamp(_spelarY, _spelarRadie, höjd - _spelarRadie);
+                _spelarX = Math.Clamp(_spelarX, _spelarRadie, bredd - _spelarRadie);
+                _spelarY = Math.Clamp(_spelarY, _spelarRadie, höjd - _spelarRadie);
+            }
+            else
+            {
+                // --- Tröghetsstyrning ---
+
+                // Piltangenter ger acceleration
+                if (tangenter.IsKeyDown(Keys.Left)) _hastighetX -= _acceleration;
+                if (tangenter.IsKeyDown(Keys.Right)) _hastighetX += _acceleration;
+                if (tangenter.IsKeyDown(Keys.Up)) _hastighetY -= _acceleration;
+                if (tangenter.IsKeyDown(Keys.Down)) _hastighetY += _acceleration;
+
+                // Space bromsar
+                if (tangenter.IsKeyDown(Keys.Space))
+                {
+                    _hastighetX *= _bromsning;
+                    _hastighetY *= _bromsning;
+                }
+
+                // Begränsa maxfart
+                float fart = (float)Math.Sqrt(_hastighetX * _hastighetX + _hastighetY * _hastighetY);
+                if (fart > _maxFart)
+                {
+                    _hastighetX = _hastighetX / fart * _maxFart;
+                    _hastighetY = _hastighetY / fart * _maxFart;
+                }
+
+                // Flytta spelaren
+                _spelarX += _hastighetX;
+                _spelarY += _hastighetY;
+
+                // Studsa mot väggar
+                if (_spelarX - _spelarRadie < 0)
+                {
+                    _spelarX = _spelarRadie;
+                    _hastighetX *= -1;
+                }
+                if (_spelarX + _spelarRadie > bredd)
+                {
+                    _spelarX = bredd - _spelarRadie;
+                    _hastighetX *= -1;
+                }
+                if (_spelarY - _spelarRadie < 0)
+                {
+                    _spelarY = _spelarRadie;
+                    _hastighetY *= -1;
+                }
+                if (_spelarY + _spelarRadie > höjd)
+                {
+                    _spelarY = höjd - _spelarRadie;
+                    _hastighetY *= -1;
+                }
+            }
 
             // Uppdatera fiender
             foreach (var boll in _fiender)
@@ -236,7 +299,7 @@ namespace Multiball
             }
         }
 
-        void StaraOm()
+        void StartaOm()
         {
             int bredd = GraphicsDevice.Viewport.Width;
             int höjd = GraphicsDevice.Viewport.Height;
@@ -249,9 +312,11 @@ namespace Multiball
             _gameOver = false;
             _liv = 3;
             _oskårbarTid = 0f;
+            _hastighetX = 2f;
+            _hastighetY = 2f;
 
             _fiender.Clear();
-            SkapaFiender(bredd, höjd);
+            //SkapaFiender(bredd, höjd);
         }
     }
 }

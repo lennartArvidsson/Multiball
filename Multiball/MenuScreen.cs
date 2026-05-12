@@ -13,10 +13,12 @@ namespace Multiball
         public int AntalFiender { get; private set; } = 5;
         public float FiendeMaxFart { get; private set; } = 8f;
         public int AntalLiv { get; private set; } = 3;
+        public int StyrLäge { get; private set; } = 0;  // 0=Direkt, 1=Tröghet
+
 
         // Vilket alternativ är markerat just nu
         int _valt = 0;
-        int _antalVal = 3;
+        int _antalVal = 4;
 
         // Tangenthantering – vänta lite mellan knapptryckningar
         float _knapptid = 0f;
@@ -44,6 +46,7 @@ namespace Multiball
                 if (_valt == 0) AntalFiender = System.Math.Max(1, AntalFiender - 1);
                 if (_valt == 1) FiendeMaxFart = System.Math.Max(2f, FiendeMaxFart - 1f);
                 if (_valt == 2) AntalLiv = System.Math.Max(1, AntalLiv - 1);
+                if (_valt == 3) StyrLäge = (StyrLäge == 0) ? 1 : 0;  // växlar mellan 0 och 1
                 _knapptid = 0.15f;
             }
             if (k.IsKeyDown(Keys.Right))
@@ -72,6 +75,9 @@ namespace Multiball
             RitaMenyRad(sb, "Antal fiender", AntalFiender.ToString(), cx, cy - 60, _valt == 0);
             RitaMenyRad(sb, "Fiendefart max", FiendeMaxFart.ToString(), cx, cy, _valt == 1);
             RitaMenyRad(sb, "Antal liv", AntalLiv.ToString(), cx, cy + 60, _valt == 2);
+
+            string styrText = StyrLäge == 0 ? "Direkt" : "Troghet";
+            RitaMenyRad(sb, "Styrning", styrText, cx, cy + 120, _valt == 3);
 
             // Instruktion längst ner
             RitaCentreradText(sb, "Piltangenter for att justera   Enter for att starta", cx, cy + 160, Color.Gray);
