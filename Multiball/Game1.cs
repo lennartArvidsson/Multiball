@@ -33,6 +33,7 @@ namespace Multiball
         MenuScreen _meny;
         bool _visaMeny = true;
         SpriteFont _font;
+        SpriteFont _fontGameOver;
 
         int _styrLäge = 0;      // 0=Direkt, 1=Tröghet
         float _hastighetX = 2f;     // tröghetshastighet vid start
@@ -40,6 +41,7 @@ namespace Multiball
         float _acceleration = 0.4f; // hur mycket en puff ger
         float _bromsning = 0.85f; // Space-broms (multipliceras varje bildruta)
         float _maxFart = 12f;   // tak för tröghetsläget
+
 
         public Game1()
         {
@@ -67,6 +69,8 @@ namespace Multiball
             //SkapaFiender(bredd, höjd);
 
             _font = Content.Load<SpriteFont>("meny");
+            _fontGameOver = Content.Load<SpriteFont>("gameover");
+
             _meny = new MenuScreen(_font);
         }
 
@@ -272,9 +276,31 @@ namespace Multiball
                 int cx = GraphicsDevice.Viewport.Width / 2;
                 int cy = GraphicsDevice.Viewport.Height / 2;
 
-                Draw2D.Linje(_spriteBatch, cx - 60, cy - 60, cx + 60, cy + 60, Color.Red);
-                Draw2D.Linje(_spriteBatch, cx + 60, cy - 60, cx - 60, cy + 60, Color.Red);
-                Draw2D.Rektangel(_spriteBatch, cx - 120, cy - 80, 240, 100, Color.Red);
+                string text1 = "GAME OVER";
+                string text2 = "Tryck R for att spela igen";
+                string text3 = "ESC for att Avsluta";
+
+                var storlek1 = _fontGameOver.MeasureString(text1);
+                var storlek2 = _font.MeasureString(text2);
+
+                // Skugga – rita texten lite förskjuten i mörkt först
+                _spriteBatch.DrawString(_fontGameOver, text1,
+                    new Vector2(cx - storlek1.X / 2 + 4, cy - storlek1.Y / 2 + 4),
+                    Color.DarkRed);
+
+                // Huvudtext i rött
+                _spriteBatch.DrawString(_fontGameOver, text1,
+                    new Vector2(cx - storlek1.X / 2, cy - storlek1.Y / 2),
+                    Color.Red);
+
+                // Mindre text under
+                _spriteBatch.DrawString(_font, text2,
+                    new Vector2(cx - storlek2.X / 2, cy + storlek1.Y / 2 + 30),
+                    Color.White);
+
+                _spriteBatch.DrawString(_font, text3,
+                    new Vector2(cx - storlek2.X / 2, cy + storlek1.Y / 2 + 80),
+                    Color.White);
             }
 
             _spriteBatch.End();
