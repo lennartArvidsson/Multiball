@@ -42,6 +42,7 @@ namespace Multiball
         float _bromsning = 0.85f; // Space-broms (multipliceras varje bildruta)
         float _maxFart = 12f;   // tak för tröghetsläget
 
+        int _magnetism = 0;
 
         public Game1()
         {
@@ -76,8 +77,8 @@ namespace Multiball
          
 
             // Ladda sparade inställningar
-            var (antalFiender, maxFart, antalLiv, styrLäge) = Inställningar.Ladda();
-            _meny.LaddaVärden(antalFiender, maxFart, antalLiv, styrLäge);
+            var (antalFiender, maxFart, antalLiv, styrLäge, _magnetism) = Inställningar.Ladda();
+            _meny.LaddaVärden(antalFiender, maxFart, antalLiv, styrLäge, _magnetism);
         }
 
         protected override void Update(GameTime gameTime)
@@ -98,8 +99,12 @@ namespace Multiball
                     _styrLäge = _meny.StyrLäge;
                     _antalBollar = _meny.AntalFiender;
                     _liv = _meny.AntalLiv;
+                    _magnetism = _meny.Magnetism;
+
+                    Inställningar.Spara(_antalBollar, _fiendeMaxFart, _liv, _styrLäge, _magnetism);
+
                     _visaMeny = false;
-                    Inställningar.Spara(_antalBollar, _fiendeMaxFart, _liv, _styrLäge);
+                    Inställningar.Spara(_antalBollar, _fiendeMaxFart, _liv, _styrLäge, _magnetism);
 
                     SkapaFiender(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
                 }
@@ -200,6 +205,53 @@ namespace Multiball
             foreach (var boll in _fiender)
                 boll.Update(bredd, höjd);
 
+            // Magnetism – dra fienderna mot spelaren
+            foreach (var fiende in _fiender)
+                fiende.AppliceraMagnetism(_spelarX, _spelarY, _magnetism);
+
+            KollisionMellanFiender();
+
+            void KollisionMellanFiender()
+            {
+                for (int i = 0; i < _fiender.Count; i++)
+                {
+                    for (int j = i + 1; j < _fiender.Count; j++)
+                    {
+                        var a = _fiender[i];
+                        var b = _fiender[j];
+
+                        float dx = b.X - a.X;
+                        float dy = b.Y - a.Y;
+                        float avstånd = (float)Math.Sqrt(dx * dx + dy * dy);
+                        float minAvstånd = a.Radie + b.Radie;
+
+                        if (avstånd < minAvstånd && avstånd > 0.01f)
+                        {
+                            // Normaliserad kollisionsaxel
+                            float nx = dx / avstånd;
+                            float ny = dy / avstånd;
+
+                            // Separera bollarna så de inte fastnar i varandra
+                            float överlapp = (minAvstånd - avstånd) / 2f;
+                            a.Flytta(-nx * överlapp, -ny * överlapp);
+                            b.Flytta(nx * överlapp, ny * överlapp);
+
+                            // Byt hastighetskomponent längs kollisionsaxeln
+                            float aDotN = a.FartX * nx + a.FartY * ny;
+                            float bDotN = b.FartX * nx + b.FartY * ny;
+
+                            a.SättFart(
+                                a.FartX - aDotN * nx + bDotN * nx,
+                                a.FartY - aDotN * ny + bDotN * ny
+                            );
+                            b.SättFart(
+                                b.FartX - bDotN * nx + bDotN * nx,
+                                b.FartY - bDotN * ny + bDotN * ny
+                            );
+                        }
+                    }
+                }
+            }
             // Räkna ner oskårbarhet
             if (_oskårbarTid > 0)
                 _oskårbarTid -= (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -255,6 +307,8 @@ namespace Multiball
             foreach (var boll in _fiender)
                 boll.Draw(_spriteBatch);
 
+            
+
             // Rita spelaren – blinka när oskårbar
             bool visaSpelaren = _oskårbarTid <= 0 || (int)(_oskårbarTid * 4) % 2 == 0;
             if (visaSpelaren)
@@ -273,6 +327,8 @@ namespace Multiball
                     Color.White * (_explosionTid / 0.5f)  // tonas ut
                 );
             }
+
+           
 
             // Rita liv som röda cirklar uppe till vänster
             for (int i = 0; i < _liv; i++)
