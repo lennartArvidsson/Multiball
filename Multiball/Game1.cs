@@ -72,6 +72,12 @@ namespace Multiball
             _fontGameOver = Content.Load<SpriteFont>("gameover");
 
             _meny = new MenuScreen(_font);
+
+         
+
+            // Ladda sparade inställningar
+            var (antalFiender, maxFart, antalLiv, styrLäge) = Inställningar.Ladda();
+            _meny.LaddaVärden(antalFiender, maxFart, antalLiv, styrLäge);
         }
 
         protected override void Update(GameTime gameTime)
@@ -93,6 +99,8 @@ namespace Multiball
                     _antalBollar = _meny.AntalFiender;
                     _liv = _meny.AntalLiv;
                     _visaMeny = false;
+                    Inställningar.Spara(_antalBollar, _fiendeMaxFart, _liv, _styrLäge);
+
                     SkapaFiender(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
                 }
                 return;
@@ -342,7 +350,7 @@ namespace Multiball
             _hastighetY = 2f;
 
             _fiender.Clear();
-            //SkapaFiender(bredd, höjd);
+            
         }
     }
 }

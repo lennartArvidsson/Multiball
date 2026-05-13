@@ -54,6 +54,7 @@ namespace Multiball
                 if (_valt == 0) AntalFiender = System.Math.Min(20, AntalFiender + 1);
                 if (_valt == 1) FiendeMaxFart = System.Math.Min(15f, FiendeMaxFart + 1f);
                 if (_valt == 2) AntalLiv = System.Math.Min(10, AntalLiv + 1);
+                if (_valt == 3) StyrLäge = (StyrLäge == 0) ? 1 : 0;  // växlar mellan 0 och 1
                 _knapptid = 0.15f;
             }
 
@@ -76,11 +77,11 @@ namespace Multiball
             RitaMenyRad(sb, "Fiendefart max", FiendeMaxFart.ToString(), cx, cy, _valt == 1);
             RitaMenyRad(sb, "Antal liv", AntalLiv.ToString(), cx, cy + 60, _valt == 2);
 
-            string styrText = StyrLäge == 0 ? "Direkt" : "Troghet";
+            string styrText = StyrLäge == 0 ? "Direkt" : "Tröghet";
             RitaMenyRad(sb, "Styrning", styrText, cx, cy + 120, _valt == 3);
 
             // Instruktion längst ner
-            RitaCentreradText(sb, "Piltangenter for att justera   Enter for att starta", cx, cy + 160, Color.Gray);
+            RitaCentreradText(sb, "Piltangenter for att justera   Enter for att starta", cx, cy + 180, Color.Gray);
         }
 
         void RitaMenyRad(SpriteBatch sb, string etikett, string värde, int cx, int cy, bool markerad)
@@ -104,6 +105,14 @@ namespace Multiball
         {
             var storlek = _font.MeasureString(text);
             sb.DrawString(_font, text, new Vector2(x - storlek.X / 2, y - storlek.Y / 2), färg);
+        }
+
+        public void LaddaVärden(int antalFiender, float maxFart, int antalLiv, int styrLäge)
+        {
+            AntalFiender = antalFiender;
+            FiendeMaxFart = maxFart;
+            AntalLiv = antalLiv;
+            StyrLäge = styrLäge;
         }
     }
 }
