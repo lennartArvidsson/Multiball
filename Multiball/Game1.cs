@@ -43,6 +43,7 @@ namespace Multiball
         float _maxFart = 12f;   // tak för tröghetsläget
 
         int _magnetism = 0;
+        float _överlevnadsTid = 0f;
 
         public Game1()
         {
@@ -282,6 +283,8 @@ namespace Multiball
                     }
                 }
             }
+            if (!_gameOver && !_visaMeny)
+                _överlevnadsTid += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             base.Update(gameTime);
         }
@@ -359,11 +362,20 @@ namespace Multiball
 
                 // Mindre text under
                 _spriteBatch.DrawString(_font, text2,
-                    new Vector2(cx - storlek2.X / 2, cy + storlek1.Y / 2 + 30),
+                    new Vector2(cx - storlek2.X / 2, cy + storlek1.Y / 2 + 60),
                     Color.White);
+                int minuter = (int)_överlevnadsTid / 60;
+                int sekunder = (int)_överlevnadsTid % 60;
+
+                string tidText = $"Du klarade dig {minuter} min och {sekunder} sek";
+                var tidStorlek = _font.MeasureString(tidText);
+
+                _spriteBatch.DrawString(_font, tidText,
+                    new Vector2(cx - tidStorlek.X / 2, cy + storlek1.Y / 2 + 10),
+                    Color.Yellow);
 
                 _spriteBatch.DrawString(_font, text3,
-                    new Vector2(cx - storlek2.X / 2, cy + storlek1.Y / 2 + 80),
+                    new Vector2(cx - storlek2.X / 2, cy + storlek1.Y / 2 + 110),
                     Color.White);
             }
 
@@ -406,7 +418,9 @@ namespace Multiball
             _hastighetY = 2f;
 
             _fiender.Clear();
-            
+
+            _överlevnadsTid = 0f;
+
         }
     }
 }

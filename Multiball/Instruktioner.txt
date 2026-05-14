@@ -1,0 +1,30 @@
+MULTIBALL
+Instruktioner
+
+Mål
+Styr din blå boll och undvik att träffas av de gula fiendebollarna så länge som möjligt!
+
+Kontroller
+TangentFunktionPiltangenterStyr bollenSpaceBroms (endast i tröghetläge)RStarta om efter Game OverEscapeAvsluta spelet
+
+Styrlägen
+Direkt – bollen rör sig exakt dit du styr med piltangenterna.
+Tröghet – bollen är alltid i rörelse. Piltangenterna ger en knuff i vald riktning och Space bromsar. Svårare men roligare!
+
+Inställningar i menyn
+Justera med vänster/höger piltangent, navigera med upp/ned. Tryck Enter för att starta.
+InställningBeskrivningAntal fienderHur många gula bollar som dyker upp (1–20)Fiendefart maxHur snabbt fiendebollarna rör sig (2–15)Antal livHur många träffar du tål innan Game Over (1–10)StyrningDirekt eller TröghetMagnetismHur starkt fiendebollarna dras mot dig (0–10). Vid 0 rör de sig slumpmässigt
+Inställningarna sparas automatiskt mellan omgångarna.
+
+Tips
+
+I tröghetläget – använd Space för att bromsa in i trånga situationer
+Hög magnetism gör spelet oförutsägbart – fienderna studsar mot varandra och ändrar riktning
+Börja med få fiender och låg fart – öka gradvis när du blir bättre
+Du är oskårbar i 2 sekunder efter en träff – din boll blinkar då
+
+
+Liv
+Dina återstående liv visas som röda cirklar uppe till vänster på skärmen.
+
+Lycka till!
