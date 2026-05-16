@@ -215,7 +215,10 @@ namespace Multiball
 
             // Magnetism – dra fienderna mot spelaren
             foreach (var fiende in _fiender)
-                fiende.AppliceraMagnetism(_spelarX, _spelarY, _magnetism);
+                fiende.AppliceraMagnetism(_spelarX, _spelarY, _magnetism, gameTime);
+           
+            foreach (var fiende in _fiender)
+                fiende.AppliceraRepulsionOchBrus(_fiender, _magnetism);
 
             KollisionMellanFiender();
 
