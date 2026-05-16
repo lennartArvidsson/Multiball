@@ -16,11 +16,12 @@ namespace Multiball
         public int AntalLiv { get; private set; } = 3;
         public int StyrLäge { get; private set; } = 0;  // 0=Direkt, 1=Tröghet
         public int Magnetism { get; private set; } = 0;
+        public bool Logga { get; private set; } = false;
 
 
         // Vilket alternativ är markerat just nu
         int _valt = 0;
-        int _antalVal = 5;
+        int _antalVal = 6;
 
         // Tangenthantering – vänta lite mellan knapptryckningar
         float _knapptid = 0f;
@@ -49,7 +50,8 @@ namespace Multiball
                 if (_valt == 1) FiendeMaxFart = System.Math.Max(2f, FiendeMaxFart - 1f);
                 if (_valt == 2) AntalLiv = System.Math.Max(1, AntalLiv - 1);
                 if (_valt == 3) StyrLäge = (StyrLäge == 0) ? 1 : 0;
-                if (_valt == 4) Magnetism = System.Math.Max(0, Magnetism - 1);  // ← enkelt!
+                if (_valt == 4) Magnetism = System.Math.Max(0, Magnetism - 1);
+                if (_valt == 5) Logga = false;
                 _knapptid = 0.15f;
             }
             if (k.IsKeyDown(Keys.Right))
@@ -58,7 +60,8 @@ namespace Multiball
                 if (_valt == 1) FiendeMaxFart = System.Math.Min(15f, FiendeMaxFart + 1f);
                 if (_valt == 2) AntalLiv = System.Math.Min(10, AntalLiv + 1);
                 if (_valt == 3) StyrLäge = (StyrLäge == 0) ? 1 : 0;
-                if (_valt == 4) Magnetism = System.Math.Min(10, Magnetism + 1);  // ← enkelt!
+                if (_valt == 4) Magnetism = System.Math.Min(10, Magnetism + 1);
+                if (_valt == 5) Logga = true;
                 _knapptid = 0.15f;
             }
 
@@ -86,7 +89,10 @@ namespace Multiball
             RitaMenyRad(sb, "Magnetism", Magnetism.ToString(), cx, cy + 180, _valt == 4);
 
             // Instruktion längst ner
-            RitaCentreradText(sb, "Piltangenter for att justera   Enter for att starta", cx, cy + 240, Color.Gray);
+            RitaCentreradText(sb, "Piltangenter for att justera   Enter for att starta", cx, cy + 340, Color.Gray);
+
+            string loggaText = Logga ? "Ja" : "Nej";
+            RitaMenyRad(sb, "Logga resultat", loggaText, cx, cy + 240, _valt == 5);
         }
 
         void RitaMenyRad(SpriteBatch sb, string etikett, string värde, int cx, int cy, bool markerad)
@@ -112,13 +118,14 @@ namespace Multiball
             sb.DrawString(_font, text, new Vector2(x - storlek.X / 2, y - storlek.Y / 2), färg);
         }
 
-        public void LaddaVärden(int antalFiender, float maxFart, int antalLiv, int styrLäge, int magnetism)
+        public void LaddaVärden(int antalFiender, float maxFart, int antalLiv, int styrLäge, int magnetism, bool logga)
         {
             AntalFiender = antalFiender;
             FiendeMaxFart = maxFart;
             AntalLiv = antalLiv;
             StyrLäge = styrLäge;
             Magnetism = magnetism;
+            Logga = logga;
         }
     }
 }

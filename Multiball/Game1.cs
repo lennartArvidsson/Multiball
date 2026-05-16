@@ -24,6 +24,7 @@ namespace Multiball
         bool _gameOver = false;
         int _antalBollar = 1;
         int _liv = 3;
+        int _startLiv = 3;
         float _oskårbarTid = 0f;   // ← var denna som saknades
         float _fiendeMaxFart = 8f;
         Texture2D _explosion;
@@ -44,6 +45,9 @@ namespace Multiball
 
         int _magnetism = 0;
         float _överlevnadsTid = 0f;
+
+        bool _logga = false;
+        //bool _harLoggat = false;  // förhindrar dubbelloggning
 
         public Game1()
         {
@@ -78,8 +82,8 @@ namespace Multiball
          
 
             // Ladda sparade inställningar
-            var (antalFiender, maxFart, antalLiv, styrLäge, _magnetism) = Inställningar.Ladda();
-            _meny.LaddaVärden(antalFiender, maxFart, antalLiv, styrLäge, _magnetism);
+            var (antalFiender, maxFart, antalLiv, styrLäge, _magnetism, logga) = Inställningar.Ladda();
+            _meny.LaddaVärden(antalFiender, maxFart, antalLiv, styrLäge, _magnetism, logga);
         }
 
         protected override void Update(GameTime gameTime)
@@ -100,12 +104,15 @@ namespace Multiball
                     _styrLäge = _meny.StyrLäge;
                     _antalBollar = _meny.AntalFiender;
                     _liv = _meny.AntalLiv;
+                    _startLiv = _meny.AntalLiv;
                     _magnetism = _meny.Magnetism;
+                    _logga = _meny.Logga;
 
-                    Inställningar.Spara(_antalBollar, _fiendeMaxFart, _liv, _styrLäge, _magnetism);
+                  
 
                     _visaMeny = false;
-                    Inställningar.Spara(_antalBollar, _fiendeMaxFart, _liv, _styrLäge, _magnetism);
+
+                    Inställningar.Spara(_antalBollar, _fiendeMaxFart, _liv, _styrLäge, _magnetism, _logga);
 
                     SkapaFiender(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
                 }
@@ -277,8 +284,13 @@ namespace Multiball
                         _explosionTid = 0.5f;    // ← sätt igång explosion
                         _explosionX = _spelarX;
                         _explosionY = _spelarY;
-                        if (_liv <= 0)
+                        if (_liv <= 0) { 
                             _gameOver = true;
+                        if (_logga)  // ← logga direkt när spelet är över
+                            Logg.SkrivaRad(_antalBollar, _fiendeMaxFart, _startLiv,
+                                           _styrLäge, _magnetism, _överlevnadsTid);
+                        }
+
                         break;
                     }
                 }
@@ -420,6 +432,7 @@ namespace Multiball
             _fiender.Clear();
 
             _överlevnadsTid = 0f;
+            //_harLoggat = false;
 
         }
     }
