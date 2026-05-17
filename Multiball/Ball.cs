@@ -20,8 +20,14 @@ namespace Multiball
         float _fokusTid = 0f;  // hur länge bollen fokuserar på spelaren
         float _viloTid = 0f;  // hur länge bollen kör rakt fram
         bool _harFokus = true;
+        Texture2D _sprite;
+        public Ball(float x, float y, float fartX, float fartY, int radie, Color färg) { }
+        
+           
 
-        public Ball(float x, float y, float fartX, float fartY, int radie, Color färg)
+            
+
+            public Ball(float x, float y, float fartX, float fartY, int radie, Color färg, Texture2D sprite = null)
         {
             _x = x;
             _y = y;
@@ -32,7 +38,9 @@ namespace Multiball
 
             // Slumpmässig starttid så inte alla tappar siktet samtidigt
             _fokusTid = (float)(_rng.NextDouble() * 4 + 1);
+            _sprite = sprite;
         }
+        
 
         public void AppliceraMagnetism(float målX, float målY, int magnetism, GameTime gameTime)
 {
@@ -75,7 +83,7 @@ namespace Multiball
 
     float rikX    = dx / avstånd;
     float rikY    = dy / avstånd;
-    float påverkan = magnetism * 0.05f;
+    float påverkan = magnetism * 0.025f;
 
     float nyX = _fartX + rikX * påverkan;
     float nyY = _fartY + rikY * påverkan;
@@ -107,10 +115,16 @@ namespace Multiball
         {
             // Hög magnetism = kort fokus, lång vila
             // Låg magnetism = lång fokus, kort vila
-            float maxFokus = magnetism <= 3 ? 6f : magnetism <= 6 ? 4f : 2f;
+            /*float maxFokus = magnetism <= 3 ? 6f : magnetism <= 6 ? 4f : 2f;
             float minFokus = magnetism <= 3 ? 4f : magnetism <= 6 ? 2f : 0.5f;
             float maxVila = magnetism <= 3 ? 1f : magnetism <= 6 ? 2f : 4f;
+            float minVila = magnetism <= 3 ? 0.5f : magnetism <= 6 ? 1f : 2f;*/
+
+            float maxFokus = magnetism <= 3 ? 6f : magnetism <= 6 ? 4f : 4f;
+            float minFokus = magnetism <= 3 ? 4f : magnetism <= 6 ? 2f : 2f;
+            float maxVila = magnetism <= 3 ? 1f : magnetism <= 6 ? 2f : 4f;
             float minVila = magnetism <= 3 ? 0.5f : magnetism <= 6 ? 1f : 2f;
+
 
             _fokusTid = (float)(_rng.NextDouble() * (maxFokus - minFokus) + minFokus);
             _viloTid = (float)(_rng.NextDouble() * (maxVila - minVila) + minVila);
@@ -170,7 +184,19 @@ namespace Multiball
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            Draw2D.Cirkel(spriteBatch, (int)_x, (int)_y, _radie, _färg);
+            if (_sprite != null)
+            {
+                int storlek = _radie * 2;
+                spriteBatch.Draw(
+                    _sprite,
+                    new Rectangle((int)_x - _radie, (int)_y - _radie, storlek, storlek),
+                    Color.White
+                );
+            }
+            else
+            {
+                Draw2D.Cirkel(spriteBatch, (int)_x, (int)_y, _radie, _färg);
+            }
         }
     }
 }

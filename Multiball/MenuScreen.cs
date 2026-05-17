@@ -47,7 +47,7 @@ namespace Multiball
             if (k.IsKeyDown(Keys.Left))
             {
                 if (_valt == 0) AntalFiender = System.Math.Max(1, AntalFiender - 1);
-                if (_valt == 1) FiendeMaxFart = System.Math.Max(2f, FiendeMaxFart - 1f);
+                if (_valt == 1) FiendeMaxFart = System.Math.Max(1f, FiendeMaxFart - 1f);
                 if (_valt == 2) AntalLiv = System.Math.Max(1, AntalLiv - 1);
                 if (_valt == 3) StyrLäge = (StyrLäge == 0) ? 1 : 0;
                 if (_valt == 4) Magnetism = System.Math.Max(0, Magnetism - 1);

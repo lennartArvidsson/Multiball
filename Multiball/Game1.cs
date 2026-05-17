@@ -49,6 +49,9 @@ namespace Multiball
         bool _logga = false;
         //bool _harLoggat = false;  // förhindrar dubbelloggning
 
+        Texture2D _enemySprite;
+        Texture2D _playerSprite;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -84,6 +87,9 @@ namespace Multiball
             // Ladda sparade inställningar
             var (antalFiender, maxFart, antalLiv, styrLäge, _magnetism, logga) = Inställningar.Ladda();
             _meny.LaddaVärden(antalFiender, maxFart, antalLiv, styrLäge, _magnetism, logga);
+
+            _enemySprite = Content.Load<Texture2D>("enemy");
+            _playerSprite = Content.Load<Texture2D>("player_ny");
         }
 
         protected override void Update(GameTime gameTime)
@@ -311,7 +317,8 @@ namespace Multiball
 
             GraphicsDevice.Clear(Color.Black);
 
-            _spriteBatch.Begin();
+            // (_spriteBatch.Begin();
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
             if (_visaMeny)
             {
@@ -325,13 +332,22 @@ namespace Multiball
             foreach (var boll in _fiender)
                 boll.Draw(_spriteBatch);
 
-            
+
 
             // Rita spelaren – blinka när oskårbar
+            //bool visaSpelaren = _oskårbarTid <= 0 || (int)(_oskårbarTid * 4) % 2 == 0;
+            //if (visaSpelaren)
+            //   Draw2D.Cirkel(_spriteBatch, (int)_spelarX, (int)_spelarY, _spelarRadie, Color.DodgerBlue);
             bool visaSpelaren = _oskårbarTid <= 0 || (int)(_oskårbarTid * 4) % 2 == 0;
             if (visaSpelaren)
-                Draw2D.Cirkel(_spriteBatch, (int)_spelarX, (int)_spelarY, _spelarRadie, Color.DodgerBlue);
-            
+            {
+                int storlek = _spelarRadie * 2;
+                _spriteBatch.Draw(
+                    _playerSprite,
+                    new Rectangle((int)_spelarX - _spelarRadie, (int)_spelarY - _spelarRadie, storlek, storlek),
+                    Color.White
+                );
+            }
             if (_explosionTid > 0)
             {
                 int storlek = (int)(150 * _explosionTid / 0.5f); // krymper från 150 → 0
@@ -412,7 +428,7 @@ namespace Multiball
                 float y = rng.Next(50, höjd - 50);
                 float fartX = (float)(rng.NextDouble() * _fiendeMaxFart + 2) * (rng.Next(2) == 0 ? 1 : -1);
                 float fartY = (float)(rng.NextDouble() * _fiendeMaxFart + 2) * (rng.Next(2) == 0 ? 1 : -1);
-                _fiender.Add(new Ball(x, y, fartX, fartY, radie: 10, färg: Color.Yellow));
+                _fiender.Add(new Ball(x, y, fartX, fartY, radie: 10, färg: Color.Yellow, sprite: _enemySprite));
             }
         }
 
