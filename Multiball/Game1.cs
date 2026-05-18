@@ -106,7 +106,7 @@ namespace Multiball
                     // Spelaren tryckte Enter – hämta inställningarna
                     _fiendeMaxFart = _meny.FiendeMaxFart;
                     System.Diagnostics.Debug.WriteLine($"Tilldelat: _fiendeMaxFart = {_fiendeMaxFart}");
-
+                    _oskårbarTid = 2f;  // ← oskårbar de första 2 sekunderna
                     _styrLäge = _meny.StyrLäge;
                     _antalBollar = _meny.AntalFiender;
                     _liv = _meny.AntalLiv;
@@ -332,6 +332,21 @@ namespace Multiball
             foreach (var boll in _fiender)
                 boll.Draw(_spriteBatch);
 
+            //*****************************
+            // Tid uppe till höger
+            int visaMin = (int)_överlevnadsTid / 60;
+            int visaSek = (int)_överlevnadsTid % 60;
+            string visaTid = visaMin > 0 ? $"{visaMin}:{visaSek:D2}" : $"{visaSek}";
+
+            var visaStorlek = _font.MeasureString(visaTid);
+            _spriteBatch.DrawString(
+                _font,
+                visaTid,
+                new Vector2(GraphicsDevice.Viewport.Width - visaStorlek.X - 20, 15),
+                Color.Red
+            );
+
+            //********************************
 
 
             // Rita spelaren – blinka när oskårbar
