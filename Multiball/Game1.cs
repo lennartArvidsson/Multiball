@@ -434,15 +434,24 @@ namespace Multiball
         {
             System.Diagnostics.Debug.WriteLine($"SkapaFiender: _fiendeMaxFart = {_fiendeMaxFart}");
 
-            Random rng = new Random();
+            //Random rng = new Random();
+
+            Random rnd = new Random();
             // Lägg till som instansvariabel
-          
+
             for (int i = 0; i < _antalBollar; i++)
             {
-                float x = rng.Next(50, bredd - 50);
-                float y = rng.Next(50, höjd - 50);
-                float fartX = (float)(rng.NextDouble() * _fiendeMaxFart + 2) * (rng.Next(2) == 0 ? 1 : -1);
-                float fartY = (float)(rng.NextDouble() * _fiendeMaxFart + 2) * (rng.Next(2) == 0 ? 1 : -1);
+                double vinkel = rnd.NextDouble() * Math.PI * 2;
+
+                float x = rnd.Next(50, bredd - 50);
+                float y = rnd.Next(50, höjd - 50);
+
+                float fartX = (float)(_fiendeMaxFart * Math.Cos(vinkel));
+                float fartY = (float)(_fiendeMaxFart * Math.Sin(vinkel));
+
+                //float fartX = (float)(rng.NextDouble() * _fiendeMaxFart + 2) * (rng.Next(2) == 0 ? 1 : -1);
+                //float fartY = (float)(rng.NextDouble() * _fiendeMaxFart + 2) * (rng.Next(2) == 0 ? 1 : -1);
+
                 _fiender.Add(new Ball(x, y, fartX, fartY, radie: 10, färg: Color.Yellow, sprite: _enemySprite));
             }
         }
