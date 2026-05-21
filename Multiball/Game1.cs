@@ -52,6 +52,9 @@ namespace Multiball
         Texture2D _enemySprite;
         Texture2D _playerSprite;
 
+        bool _pausad = false;
+        KeyboardState _förraKnappar;  // instansvariabel
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -60,6 +63,7 @@ namespace Multiball
             _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             _graphics.IsFullScreen = true;
+            KeyboardState _förraKnappar = new KeyboardState();
         }
 
         protected override void LoadContent()
@@ -96,8 +100,17 @@ namespace Multiball
         {
             int bredd = GraphicsDevice.Viewport.Width;
             int höjd = GraphicsDevice.Viewport.Height;
+            
+           
 
             var tangenter = Keyboard.GetState();
+            // Toggla paus med P
+            if (tangenter.IsKeyDown(Keys.P) && !_förraKnappar.IsKeyDown(Keys.P))
+                _pausad = !_pausad;
+
+            _förraKnappar = tangenter;
+
+            if (_pausad) return;  // inget händer när spelet är pausat
 
             if (_visaMeny)
             {
@@ -424,7 +437,24 @@ namespace Multiball
                     new Vector2(cx - storlek2.X / 2, cy + storlek1.Y / 2 + 110),
                     Color.White);
             }
+            if (_pausad)
+            {
+                int cx = GraphicsDevice.Viewport.Width / 2;
+                int cy = GraphicsDevice.Viewport.Height / 2;
 
+                string pausText = "PAUS";
+                var pausStrl = _fontGameOver.MeasureString(pausText);
+
+                // Skugga
+                _spriteBatch.DrawString(_fontGameOver, pausText,
+                    new Vector2(cx - pausStrl.X / 2 + 4, cy - pausStrl.Y / 2 + 4),
+                    Color.DarkGray);
+
+                // Text
+                _spriteBatch.DrawString(_fontGameOver, pausText,
+                    new Vector2(cx - pausStrl.X / 2, cy - pausStrl.Y / 2),
+                    Color.White);
+            }
             _spriteBatch.End();
 
             base.Draw(gameTime);
