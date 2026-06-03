@@ -53,7 +53,14 @@ namespace Multiball
         Texture2D _playerSprite;
 
         bool _pausad = false;
-        KeyboardState _förraKnappar;  // instansvariabel
+        KeyboardState _förraKnappar;  // instansvariabel// Styrtangenter – ändra här för att byta kontroller
+
+        Keys _styrVänster = Keys.J;
+        Keys _styrHöger = Keys.L;
+        Keys _styrUpp = Keys.I;
+        Keys _styrNer = Keys.K;
+
+
 
         public Game1()
         {
@@ -94,6 +101,8 @@ namespace Multiball
 
             _enemySprite = Content.Load<Texture2D>("enemy");
             _playerSprite = Content.Load<Texture2D>("player_ny");
+
+           
         }
 
         protected override void Update(GameTime gameTime)
@@ -159,7 +168,7 @@ namespace Multiball
 
             if (_gameOver)
             {
-                if (tangenter.IsKeyDown(Keys.R))
+                if (tangenter.IsKeyDown(Keys.R))//Starta om med upp tangent så man är beredd
                     StartaOm();
                 return;
             }
@@ -168,10 +177,10 @@ namespace Multiball
             if (_styrLäge == 0)
             {
                 // --- Direkt styrning ---
-                if (tangenter.IsKeyDown(Keys.Left)) _spelarX -= _spelarFart;
-                if (tangenter.IsKeyDown(Keys.Right)) _spelarX += _spelarFart;
-                if (tangenter.IsKeyDown(Keys.Up)) _spelarY -= _spelarFart;
-                if (tangenter.IsKeyDown(Keys.Down)) _spelarY += _spelarFart;
+                if (tangenter.IsKeyDown(_styrVänster)) _spelarX -= _spelarFart;
+                if (tangenter.IsKeyDown(_styrHöger)) _spelarX += _spelarFart;
+                if (tangenter.IsKeyDown(_styrUpp)) _spelarY -= _spelarFart;
+                if (tangenter.IsKeyDown(_styrNer)) _spelarY += _spelarFart;
 
                 _spelarX = Math.Clamp(_spelarX, _spelarRadie, bredd - _spelarRadie);
                 _spelarY = Math.Clamp(_spelarY, _spelarRadie, höjd - _spelarRadie);
@@ -181,10 +190,10 @@ namespace Multiball
                 // --- Tröghetsstyrning ---
 
                 // Piltangenter ger acceleration
-                if (tangenter.IsKeyDown(Keys.Left)) _hastighetX -= _acceleration;
-                if (tangenter.IsKeyDown(Keys.Right)) _hastighetX += _acceleration;
-                if (tangenter.IsKeyDown(Keys.Up)) _hastighetY -= _acceleration;
-                if (tangenter.IsKeyDown(Keys.Down)) _hastighetY += _acceleration;
+                if (tangenter.IsKeyDown(_styrVänster)) _hastighetX -= _acceleration;
+                if (tangenter.IsKeyDown(_styrHöger)) _hastighetX += _acceleration;
+                if (tangenter.IsKeyDown(_styrUpp)) _hastighetY -= _acceleration;
+                if (tangenter.IsKeyDown(_styrNer)) _hastighetY += _acceleration;
 
                 // Space bromsar
                 if (tangenter.IsKeyDown(Keys.Space))
@@ -505,7 +514,7 @@ namespace Multiball
             _fiender.Clear();
 
             _överlevnadsTid = 0f;
-            //_harLoggat = false;
+            
 
         }
     }
